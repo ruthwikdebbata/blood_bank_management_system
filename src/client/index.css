@@ -1,0 +1,46 @@
+.page-container {
+  padding: 2rem;
+  font-family: sans-serif;
+}
+
+.navbar {
+  background: #004d40;
+  padding: 1rem;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.contact-form button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background: #00695c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
