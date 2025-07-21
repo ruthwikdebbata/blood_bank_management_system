@@ -6,6 +6,7 @@ import ContactUs from './pages/ContactUs';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Inventory from './pages/Inventory';
 
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/login"   element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/inventory" element={<Inventory />} />
         </Routes>
       </main>
     </div>

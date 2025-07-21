@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useContext } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -16,42 +15,53 @@ import {
 } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function Navbar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate = useNavigate();
 
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const { user, signOut } = useContext(AuthContext);
+
+  const guestLinks = [
+    { label: 'Home',      to: '/' },
+    { label: 'About Us',  to: '/about' },
+    { label: 'Contact Us',to: '/contact' },
+    { label: 'Login',     to: '/login' },
+    { label: 'Register',  to: '/register' },
+  ];
+
+  const authLinks = [
+    { label: 'Inventory', to: '/inventory' },
+  ];
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const toggleDrawer = (open) => () => setDrawerOpen(open);
 
-  const navLinks = [
-    { label: 'Home',      href: '/' },
-    { label: 'About Us',  href: '/about' },
-    { label: 'Contact Us',href: '/contact' },
-    { label: 'Login',     href: '/login' },
-    { label: 'Register',  href: '/register' },
-  ];
+  // handle logout click
+  const handleLogout = () => {
+    signOut();
+    navigate('/login');
+  };
+
+  const linksToShow = user ? authLinks : guestLinks;
 
   return (
     <>
       <AppBar position="static">
         <Toolbar>
           {isMobile && (
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open menu"
-              onClick={toggleDrawer(true)}
-              sx={{ mr: 2 }}
-            >
+            <IconButton edge="start" color="inherit" onClick={toggleDrawer(true)} sx={{ mr: 2 }}>
               <MenuIcon />
             </IconButton>
           )}
 
           <Typography
             variant="h6"
-            component="a"
-            href="/"
+            component={Link}
+            to="/"
             sx={{ textDecoration: 'none', color: 'inherit', flexGrow: 1 }}
           >
             BloodBankPro
@@ -59,16 +69,22 @@ export default function Navbar() {
 
           {!isMobile && (
             <Box sx={{ display: 'flex', gap: 2 }}>
-              {navLinks.map((link) => (
+              {linksToShow.map(link => (
                 <Button
                   key={link.label}
                   color="inherit"
-                  href={link.href}
+                  component={Link}
+                  to={link.to}
                   sx={{ textTransform: 'none' }}
                 >
                   {link.label}
                 </Button>
               ))}
+              {user && (
+                <Button color="inherit" onClick={handleLogout} sx={{ textTransform: 'none' }}>
+                  Logout
+                </Button>
+              )}
             </Box>
           )}
         </Toolbar>
@@ -82,13 +98,20 @@ export default function Navbar() {
           onKeyDown={toggleDrawer(false)}
         >
           <List>
-            {navLinks.map((link) => (
-              <ListItem button key={link.label} component="a" href={link.href}>
+            {linksToShow.map(link => (
+              <ListItem button key={link.label} component={Link} to={link.to}>
                 <ListItemText primary={link.label} />
               </ListItem>
             ))}
+            {user && (
+              <>
+                <Divider />
+                <ListItem button onClick={handleLogout}>
+                  <ListItemText primary="Logout" />
+                </ListItem>
+              </>
+            )}
           </List>
-          <Divider />
         </Box>
       </Drawer>
     </>
