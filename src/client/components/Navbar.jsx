@@ -1,3 +1,4 @@
+// src/client/components/Navbar.jsx
 import React, { useState, useContext } from 'react';
 import {
   AppBar,
@@ -22,38 +23,71 @@ export default function Navbar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
-
   const { user, signOut } = useContext(AuthContext);
 
+  // Link sets by role
   const guestLinks = [
-    { label: 'Home',      to: '/' },
-    { label: 'About Us',  to: '/about' },
-    { label: 'Contact Us',to: '/contact' },
-    { label: 'Login',     to: '/login' },
-    { label: 'Register',  to: '/register' },
+    { label: 'Home',       to: '/' },
+    { label: 'About Us',   to: '/about' },
+    { label: 'Contact Us', to: '/contact' },
+    { label: 'Login',      to: '/login' },
+    { label: 'Register',   to: '/register' },
   ];
 
-  const authLinks = [
-    { label: 'Inventory', to: '/inventory' },
+  const userLinks = [
+    { label: 'User Dashboard',  to: '/user_dashboard' },
+    { label: 'Inventory',       to: '/inventory' },
+    { label: 'Donate/Request', to: '/transact' },
+    { label: 'Donation History', to: '/donations' },
+    { label: 'Support', to: '/support' },
+    { label: 'Profile', to: '/profile' },
   ];
+
+  const staffLinks = [
+    { label: 'Inventory',        to: '/inventory' },
+    { label: 'Staff Dashboard',  to: '/staff_dashboard' },
+    { label: 'Profile', to: '/profile' },
+  ];
+
+  const adminLinks = [
+    { label: 'Inventory',        to: '/inventory' },
+    { label: 'Admin Dashboard',  to: '/admin_dashboard' },
+    { label: 'Manage Users',     to: '/admin/users' },
+    { label: 'Profile', to: '/profile' },
+  ];
+
+  // Pick which links to show
+  let linksToShow;
+  if (!user) {
+    linksToShow = guestLinks;
+  } else if (user.role === 'Admin') {
+    linksToShow = adminLinks;
+  } else if (user.role === 'Staff') {
+    linksToShow = staffLinks;
+  } else {
+    // default regular user
+    linksToShow = userLinks;
+  }
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const toggleDrawer = (open) => () => setDrawerOpen(open);
+  const toggleDrawer = open => () => setDrawerOpen(open);
 
-  // handle logout click
   const handleLogout = () => {
     signOut();
     navigate('/login');
   };
-
-  const linksToShow = user ? authLinks : guestLinks;
 
   return (
     <>
       <AppBar position="static">
         <Toolbar>
           {isMobile && (
-            <IconButton edge="start" color="inherit" onClick={toggleDrawer(true)} sx={{ mr: 2 }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={toggleDrawer(true)}
+              sx={{ mr: 2 }}
+            >
               <MenuIcon />
             </IconButton>
           )}
@@ -80,8 +114,13 @@ export default function Navbar() {
                   {link.label}
                 </Button>
               ))}
+
               {user && (
-                <Button color="inherit" onClick={handleLogout} sx={{ textTransform: 'none' }}>
+                <Button
+                  color="inherit"
+                  onClick={handleLogout}
+                  sx={{ textTransform: 'none' }}
+                >
                   Logout
                 </Button>
               )}
@@ -99,10 +138,16 @@ export default function Navbar() {
         >
           <List>
             {linksToShow.map(link => (
-              <ListItem button key={link.label} component={Link} to={link.to}>
+              <ListItem
+                button
+                key={link.label}
+                component={Link}
+                to={link.to}
+              >
                 <ListItemText primary={link.label} />
               </ListItem>
             ))}
+
             {user && (
               <>
                 <Divider />
